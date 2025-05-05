@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+// gcc tarea2.c tdas/list.c tdas/map.c tdas/extra.c -o tarea2
+
 typedef struct {
   char id[100];
   char artists[100];
@@ -12,8 +14,7 @@ typedef struct {
   char track_name[100];
   float tempo;
   char track_genre[100];
-} Track;
-
+} Film;
 
 // Menú principal
 void mostrarMenuPrincipal() {
@@ -55,52 +56,121 @@ int is_equal_str(void *key1, void *key2) {
 int is_equal_int(void *key1, void *key2) {
   return *(int *)key1 == *(int *)key2; // Compara valores enteros directamente
 }
-void cargar_canciones(Map *tracks_by_id, Map *tracks_by_genre) {
+
+
+void cargar_musica(Map *music_byid, Map *music_bygenres) {
   FILE *archivo = fopen("song_dataset.csv", "r");
   if (archivo == NULL) {
     perror(
-        "Error al abrir el archivo");
+        "Error al abrir el archivo"); 
     return;
   }
+  
+  char **campos;
+  campos = leer_linea_csv(archivo, ',');
 
-  char **linea;
-  linea = leer_linea_csv(archivo, ',');
+  long contador = 0;
+  while ((campos = leer_linea_csv(archivo, ',')) != NULL) {
+    Film *song = (Film *)malloc(sizeof(Film));
+    strncpy(song->id, campos[0], 99);
+    song->id[99] = '\0';
+    
+    strncpy(song->artists, campos[2], 99);
+    song->artists[99] = '\0';
+    
+    strncpy(song->album_name, campos[3], 99);
+    song->album_name[99] = '\0';
+    
+    strncpy(song->track_name, campos[4], 99);
+    song->track_name[99] = '\0';
+    
+    song->tempo = atof(campos[18]);
+    
+    strncpy(song->track_genre, campos[20], 99);
+    song->track_genre[99] = '\0';
+    
+    map_insert(music_byid, song->id, song);
+    MapPair *genre_pair = map_search(music_bygenres, song->track_genre);
 
-  while ((linea = leer_linea_csv(archivo, ',')) != NULL) {
-    Track *song = (Track *)malloc(sizeof(Track));
-
-    strcpy(song->id, linea[0]);
-    strcpy(song->artists, linea[2]);
-    strcpy(song->album_name, linea[3]);
-    strcpy(song->track_name, linea[4]);
-    song->tempo = atof(linea[18]);
-    strcpy(song->track_genre, linea[20]);
+    if (genre_pair == NULL) {
+      
+      List *new_list = list_create();
+      list_pushBack(new_list, song);
+      map_insert(music_bygenres, song->track_genre, new_list);
+    } else {
+      List *genre_list = (List *)genre_pair->value;
+      list_pushBack(genre_list, song);
+    }
+    contador++;
+    if (contador % 1000 == 0) {
+      printf("Cargando canciones (%ld / 114001)\n", contador);
+    }
   }
-  fclose(archivo);
-
-  map_insert(tracks_by_id, song->id, song);
-
-  // Insertar en mapa por género (asumiendo un solo género por ahora)
-  map_insert(tracks_by_genre, song->track_genre, song);
+  fclose(archivo); 
+  printf("Canciones cargadas exitosamente (%ld)\n", contador);
+  printf("Presione una tecla para continuar...\n");
+  while (getchar() != '\n');
+  getchar();
 }
 
-fclose(archivo);
+/**
+ * Busca y muestra la información de una película por su ID en un mapa.
+ */
+/*
+void buscar_por_id(Map *music_byid) {
+  char id[10]; // Buffer para almacenar el ID de la película
 
-// Mostrar canciones cargadas para depuración
-printf("Canciones cargadas:\n");
-MapPair *pair = map_first(tracks_by_id);
-while (pair != NULL) {
-  Track *song = (Track *)pair->value;
-  printf("ID: %s, Track: %s, Artists: %s, Album: %s, Tempo: %.3f, Género: %s\n",
-         song->id, song->track_name, song->artists, song->album_name, song->tempo, song->track_genre);
-  pair = map_next(tracks_by_id);
+  // Solicita al usuario el ID de la película
+  printf("Ingrese el id de la película: ");
+  scanf("%s", id); // Lee el ID del teclado
 
+  // Busca el par clave-valor en el mapa usando el ID proporcionado
+  MapPair *pair = map_search(music_byid, id);
+
+  // Si se encontró el par clave-valor, se extrae y muestra la información de la
+  // película
+  if (pair != NULL) {
+    Film *peli =
+        pair->value; // Obtiene el puntero a la estructura de la película
+    // Muestra el título y el año de la película
+    printf("Título: %s, Año: %d\n", peli->artists, peli->year);
+  } else {
+    // Si no se encuentra la película, informa al usuario
+    printf("La película con id %s no existe\n", id);
+  }
 }
 
-int main(){
-  char opcion;
-  Map *tracks_by_id = map_create(is_equal_str);
-  Map *tracks_by_genre = map_create(is_equal_str);
+void buscar_por_genero(Map *music_bygenres) {
+  char genero[100];
+
+  // Solicita al usuario el ID de la película
+  printf("Ingrese el género de la película: ");
+  scanf("%s", genero); // Lee el ID del teclado
+
+  MapPair *pair = map_search(music_bygenres, genero);
+  
+  if (pair != NULL) {
+      List* pelis = pair->value;
+      Film *peli = list_first(pelis);
+      
+      while (peli != NULL) {
+        printf("ID: %s, Título: %s, Director: %s, Año: %d\n", peli->id, peli->artists,
+           peli->director, peli->year);
+        peli = list_next(pelis);
+      }
+  }
+}
+*/
+int main() {
+  char opcion; // Variable para almacenar una opción ingresada por el usuario
+               // (sin uso en este fragmento)
+
+  // Crea un mapa para almacenar películas, utilizando una función de
+  // comparación que trabaja con claves de tipo string.
+  Map *music_byid = map_create(is_equal_str);
+  Map *music_bygenres = map_create(is_equal_str);
+
+  // Recuerda usar un mapa por criterio de búsqueda
 
   do {
     mostrarMenuPrincipal();
@@ -109,34 +179,26 @@ int main(){
 
     switch (opcion) {
     case '1':
-      cargar_canciones(tracks_by_id, tracks_by_genre);
+      cargar_musica(music_byid, music_bygenres);
       break;
     case '2':
-      printf("Buscar por género:\n");
+      //buscar_por_id(music_byid);
       break;
     case '3':
-      printf("Buscar por artista:\n");
       break;
     case '4':
-      printf("Buscar por tempo:\n");
+      //buscar_por_genero(music_bygenres);
       break;
     case '5':
-      printf("Crear lista de reproducción:\n");
       break;
     case '6':
-      printf("Agregar canción a la lista:\n");
       break;
     case '7':
-      printf("Mostrar canciones de la lista:\n");
       break;
-    case '8':
-      printf("Saliendo...\n");
-      break;
-    default:
-      printf("Opción inválida.\n");
     }
     presioneTeclaParaContinuar();
 
   } while (opcion != '8');
+
   return 0;
 }
