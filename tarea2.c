@@ -143,7 +143,7 @@ void cargar_musica(Map *music_byid, Map *music_bygenres, Map *music_byartist) {
       printf("Cargando canciones (%ld / 114000)\n", contador);
     }
 
-    if(contador == 10000) break;
+    //if(contador == 10000) break;
   }
   fclose(archivo); 
   printf("\nCanciones cargadas exitosamente!\n\n");
@@ -289,7 +289,7 @@ int main() {
       buscar_por_genero(music_bygenres);
       break;
     case '3':
-      buscar_por_artista(music_bygenres);
+      buscar_por_artista(music_byartist);
       break;
     case '4':
       //buscar_por_tempo(music_byid);
