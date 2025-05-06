@@ -5,17 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-
-#define RESET_COLOR   "\033[0m"
-#define LIGHT_RED     "\033[1;31m"
-#define LIGHT_GREEN   "\033[1;32m"
-#define LIGHT_YELLOW  "\033[1;33m"
-#define LIGHT_BLUE    "\033[1;34m"
-#define LIGHT_CYAN    "\033[1;36m"
-#define LIGHT_WHITE   "\033[1;37m"
-
-// gcc tarea2.c tdas/list.c tdas/map.c tdas/extra.c -o tarea2
-// $OutputEncoding = [Console]::OutputEncoding = [Text.UTF8Encoding]::new()
+#include <locale.h>
 
 typedef struct {
   char id[100];
@@ -28,19 +18,20 @@ typedef struct {
 
 void mostrarMenuPrincipal() {
   limpiarPantalla();
-  puts("========================================");
-  puts("     Base de Datos de Canciones");
-  puts("========================================");
-
-  puts("1) Cargar canciones");
-  puts("2) Buscar por género");
-  puts("3) Buscar por artista");
-  puts("4) Buscar por tempo");
-  puts("5) Crear lista de reproducción");
-  puts("6) Agregar canción a la lista");
-  puts("7) Mostrar canciones de la lista");
-  puts("8) Salir");
+  puts("╔════════════════════════════════════════════╗");
+  puts("║              Spotifind - Menú              ║");
+  puts("╠════════════════════════════════════════════╣");
+  puts("║  1) Cargar canciones                       ║");
+  puts("║  2) Buscar por género                      ║");
+  puts("║  3) Buscar por artista                     ║");
+  puts("║  4) Buscar por tempo                       ║");
+  puts("║  5) Crear lista de reproducción            ║");
+  puts("║  6) Agregar canción a la lista             ║");
+  puts("║  7) Mostrar canciones de la lista          ║");
+  puts("║  8) Salir                                  ║");
+  puts("╚════════════════════════════════════════════╝");
 }
+
 
 /**
  * Compara dos claves de tipo string para determinar si son iguales.
@@ -164,7 +155,6 @@ void cargar_musica(Map *music_byid, Map *music_bygenres, Map *music_byartist, Ma
 void mostrar_canciones(MapPair *pair) {
   List *canciones = (List *)pair->value;
   printf("\nLista de canciones:\n");
-  printf("--------------------------------------------------\n");
   Song *cancion = (Song *)list_first(canciones);
   while (cancion != NULL) {
     printf("ID: %s | Artista(s): ", cancion->id);
@@ -181,13 +171,11 @@ void mostrar_canciones(MapPair *pair) {
     }
   printf(" | Álbum: %s | Canción: %s | Tempo: %.0f | Género: %s\n",
   cancion->album_name, cancion->track_name, cancion->tempo, cancion->track_genre);
-  printf("--------------------------------------------------\n");
   cancion = (Song *)list_next(canciones);
   }
 }
 
 void buscar_por_genero(Map *music_bygenres) {
-
   if(map_first(music_bygenres) == NULL){
       printf("¡El programa no puede funcionar si no se han cargado canciones!\n\n");
       return;
@@ -291,7 +279,7 @@ void buscar_por_tempo(Map *music_bytempo) {
 
 void crear_lista_repro(Map *listas_repro){
   char nombre[100];
-  printf("Ingrese el nombre que desea tener su Lista: ");
+  printf("Ingrese el nombre para su lista de reproducción: ");
   scanf(" %[^\n]s", nombre);
   MapPair *pair = map_search(listas_repro, nombre);
 
@@ -299,32 +287,34 @@ void crear_lista_repro(Map *listas_repro){
     List *new_list = list_create();
     char *nombre_copia = strdup(nombre);
     map_insert(listas_repro, nombre_copia, new_list);
-    printf("Lista creada con exito\n");
+    printf("\nLista de reproducción (%s) creada con éxito.\n", nombre_copia);
   } else {
-    printf("Ya se ha creado una lista con ese Nombre\n");
+    printf("\nYa existe una lista de reproducción con ese nombre, por favor intenta con otro.\n");
   }
 
 }
 
 void agregar_cancion(Map *listas_repro) {
-  printf("A qué lista quiere agregar la canción:\n");
+  //printf("A qué lista quiere agregar la canción:\n");
 
   MapPair *pair = map_first(listas_repro);
   if (pair == NULL) {
       printf("No hay listas de reproducción disponibles.\n");
       return;
   }
-
-
+  puts("Listas de reproducción creadas:");
+  puts("  N° | Nombre                    | Canciones ");
+  puts("-----+---------------------------+-----------");
   int contador = 1;
   while (pair != NULL) {
-      printf("%d. %s\n", contador, (char *)pair->key);
+      printf(" %2d  | %-25s |     %3d\n", contador, (char *)pair->key, list_size(pair->value));
       pair = map_next(listas_repro);
       contador++;
   }
 }
 
 int main() {
+  setlocale(LC_ALL, "es_ES.UTF-8"); // Para que se puedan ver tildes, ñ, y carácteres especiales.
   char opcion;
   Map *music_byid = map_create(is_equal_str);
   Map *music_bygenres = map_create(is_equal_str);
@@ -336,6 +326,7 @@ int main() {
     mostrarMenuPrincipal();
     printf("Ingrese su opción: ");
     scanf(" %c", &opcion);
+    printf("\n");
 
     switch (opcion) {
     case '1':
