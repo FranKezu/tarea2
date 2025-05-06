@@ -7,6 +7,7 @@
 #include <stdbool.h>
 
 // gcc tarea2.c tdas/list.c tdas/map.c tdas/extra.c -o tarea2
+// $OutputEncoding = [Console]::OutputEncoding = [Text.UTF8Encoding]::new()
 
 typedef struct {
   char id[100];
@@ -145,7 +146,7 @@ void buscar_por_artista(Map *music_byid) {
 void buscar_por_genero(Map *music_bygenres) {
 
   if(map_first(music_bygenres) == NULL){
-      printf("NO SE HAN CARGADO CANCIONES\n");
+      printf("¡El programa no puede funcionar si no se han cargado canciones!\n\n");
       return;
   }    
   char *genres[114] = {
@@ -175,20 +176,28 @@ void buscar_por_genero(Map *music_bygenres) {
 
   char genero[100];
   
-  printf("Ingrese el género de la cancion: ");
-  scanf("%s", genero);  
+  printf("\n─────────────────────────────────────────────────────────────────────────\n");
+  printf("BÚSQUEDA POR GÉNERO MUSICAL\n");
+  printf("─────────────────────────────────────────────────────────────────────────\n");
+  printf("Ingrese el género de la canción: ");
+  scanf("%s", genero);
+
   MapPair *pair = map_search(music_bygenres, genero);
 
   while(pair == NULL){
-    printf("¡¡¡El genero ingresado no se ha encontrado, porfa ingrese uno valido!!!\n");
+    printf("\nEl género ingresado no es válido. ¡Por favor ingrese uno de los siguientes géneros!\n\n");
 
-    printf("mostrando generos musicales disponibles:\n");
-    for(int i = 0; i < 114; i++){
-      printf("%s; ",genres[i]);
-      if(i % 14 == 0 && i != 0) printf("\n");
+    printf("Lista de géneros musicales disponibles:\n");
+    for (int i = 0; i < 114; i++) {
+      printf("- %s", genres[i]);
+      if (i % 14 == 0 && i != 0) 
+        printf("\n");
+      else 
+        printf(" ");
     }
-    printf("Ingrese el género de la cancion: ");
-    scanf("%s", genero);  
+    printf("\n\n");
+    printf("Ingrese el género de la canción: ");
+    scanf("%s", genero);
     pair = map_search(music_bygenres, genero);
   }
   
@@ -203,21 +212,16 @@ void buscar_por_genero(Map *music_bygenres) {
 }
 
 int main() {
-  char opcion; // Variable para almacenar una opción ingresada por el usuario
-               // (sin uso en este fragmento)
-
-  // Crea un mapa para almacenar películas, utilizando una función de
-  // comparación que trabaja con claves de tipo string.
+  char opcion;
   Map *music_byid = map_create(is_equal_str);
   Map *music_bygenres = map_create(is_equal_str);
-
-  // Recuerda usar un mapa por criterio de búsqueda
 
   bool cargadas = false;
   do {
     mostrarMenuPrincipal();
     printf("Ingrese su opción: ");
     scanf(" %c", &opcion);
+
     switch (opcion) {
     case '1':
       if(cargadas) printf("Ya se cargaron aweonao\n");
@@ -241,6 +245,8 @@ int main() {
       break;
     case '7':
       break;
+    default:
+      puts("Opción no válida. Por favor, intente de nuevo.");
     }
     presioneTeclaParaContinuar();
 
