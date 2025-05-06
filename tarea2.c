@@ -6,19 +6,26 @@
 #include <string.h>
 #include <stdbool.h>
 
+#define RESET_COLOR   "\033[0m"
+#define LIGHT_RED     "\033[1;31m"
+#define LIGHT_GREEN   "\033[1;32m"
+#define LIGHT_YELLOW  "\033[1;33m"
+#define LIGHT_BLUE    "\033[1;34m"
+#define LIGHT_CYAN    "\033[1;36m"
+#define LIGHT_WHITE   "\033[1;37m"
+
 // gcc tarea2.c tdas/list.c tdas/map.c tdas/extra.c -o tarea2
 // $OutputEncoding = [Console]::OutputEncoding = [Text.UTF8Encoding]::new()
 
 typedef struct {
   char id[100];
-  char artists[100];
+  List *artists;
   char album_name[100];
   char track_name[100];
   float tempo;
   char track_genre[100];
 } Song;
 
-// Menú principal
 void mostrarMenuPrincipal() {
   limpiarPantalla();
   puts("========================================");
@@ -60,7 +67,7 @@ int is_equal_int(void *key1, void *key2) {
 }
 
 
-void cargar_musica(Map *music_byid, Map *music_bygenres) {
+void cargar_musica(Map *music_byid, Map *music_bygenres, Map *music_byartist) {
   FILE *archivo = fopen("song_dataset.csv", "r");
   if (archivo == NULL) {
     perror(
@@ -76,9 +83,12 @@ void cargar_musica(Map *music_byid, Map *music_bygenres) {
     Song *song = (Song *)malloc(sizeof(Song));
     strncpy(song->id, campos[0], 99);
     song->id[99] = '\0';
-    
-    strncpy(song->artists, campos[2], 99);
-    song->artists[99] = '\0';
+
+    if (campos[2] == NULL || strlen(campos[2]) == 0) {
+      song->artists = list_create();
+    } else {
+      song->artists = split_string(campos[2], ";");
+    }
     
     strncpy(song->album_name, campos[3], 99);
     song->album_name[99] = '\0';
@@ -103,6 +113,31 @@ void cargar_musica(Map *music_byid, Map *music_bygenres) {
       List *genre_list = (List *)genre_pair->value;
       list_pushBack(genre_list, song);
     }
+
+    char *artista = (char *)list_first(song->artists);
+
+    while (artista != NULL) {
+      MapPair *artist_pair = map_search(music_byartist, artista);
+      if (artist_pair == NULL) {
+        List *aux_list = list_create();
+        if (aux_list == NULL) {
+          printf("Error: No se pudo crear una lista para el artista %s.\n", artista);
+          free(song);
+          fclose(archivo);
+          printf("Presione una tecla para continuar...\n");
+          presioneTeclaParaContinuar();
+          return;
+        }
+        list_pushBack(aux_list, song);
+        char *artista_copy = strdup(artista);
+        map_insert(music_byartist, artista_copy, aux_list);
+      } else {
+        List *artist_list = (List *)artist_pair->value;
+        list_pushBack(artist_list, song);
+      }
+      artista = (char *)list_next(song->artists);
+    }
+
     contador++;
     if (contador % 1000 == 0) {
       printf("Cargando canciones (%ld / 114000)\n", contador);
@@ -111,45 +146,16 @@ void cargar_musica(Map *music_byid, Map *music_bygenres) {
     if(contador == 10000) break;
   }
   fclose(archivo); 
-  printf("Canciones cargadas exitosamente (%ld)\n", contador);
-  while (getchar() != '\n');
-  getchar();
+  printf("\nCanciones cargadas exitosamente!\n\n");
 }
 
-/**
- * Busca y muestra la información de una película por su ID en un mapa.
- */
-/*
-void buscar_por_artista(Map *music_byid) {
-  char id[10]; // Buffer para almacenar el ID de la película
-
-  // Solicita al usuario el ID de la película
-  printf("Ingrese el id de la película: ");
-  scanf("%s", id); // Lee el ID del teclado
-
-  // Busca el par clave-valor en el mapa usando el ID proporcionado
-  MapPair *pair = map_search(music_byid, id);
-
-  // Si se encontró el par clave-valor, se extrae y muestra la información de la
-  // película
-  if (pair != NULL) {
-    Song *peli =
-        pair->value; // Obtiene el puntero a la estructura de la película
-    // Muestra el título y el año de la película
-    printf("Título: %s, Año: %d\n", peli->artists, peli->year);
-  } else {
-    // Si no se encuentra la película, informa al usuario
-    printf("La película con id %s no existe\n", id);
-  }
-}
-*/
 void buscar_por_genero(Map *music_bygenres) {
 
   if(map_first(music_bygenres) == NULL){
       printf("¡El programa no puede funcionar si no se han cargado canciones!\n\n");
       return;
   }    
-  char *genres[114] = {
+  char *lista_generos[114] = {
     "acoustic", "afrobeat", "alt-rock", "alternative", "ambient",
     "anime", "black-metal", "bluegrass", "blues", "brazil",
     "breakbeat", "british", "cantopop", "chicago-house", "children",
@@ -189,8 +195,8 @@ void buscar_por_genero(Map *music_bygenres) {
 
     printf("Lista de géneros musicales disponibles:\n");
     for (int i = 0; i < 114; i++) {
-      printf("- %s", genres[i]);
-      if (i % 14 == 0 && i != 0) 
+      printf("- %s", lista_generos[i]);
+      if (i % 14 == 0 && i != 0)
         printf("\n");
       else 
         printf(" ");
@@ -205,8 +211,56 @@ void buscar_por_genero(Map *music_bygenres) {
   Song *cancion = list_first(canciones);
       
   while (cancion != NULL) {
-    printf("ID: %s, Artista: %s, Album: %s, Track: %s, Tempo: %f, Track Genre: %s\n", cancion->id, cancion->artists, cancion->album_name, 
-    cancion->track_name, cancion->tempo, cancion->track_genre);
+    printf("ID: %s, Artista(s): ", cancion->id);
+
+    char *current = list_first(cancion->artists);
+    printf("%s", current);
+    
+    while(current != NULL){
+      current = list_next(cancion->artists);
+      if(current != NULL) printf(", %s", current);
+    }
+
+    printf(" - Album: %s - Track: %s - Tempo: %f - Track Genre: %s\n", cancion->album_name, 
+      cancion->track_name, cancion->tempo, cancion->track_genre);
+    cancion = list_next(canciones);
+  }
+}
+
+void buscar_por_artista(Map *music_byartist) {
+  char artista[100];
+  
+  printf("\n─────────────────────────────────────────────────────────────────────────\n");
+  printf("BÚSQUEDA POR ARTISTA\n");
+  printf("─────────────────────────────────────────────────────────────────────────\n");
+  printf("Ingrese el artista que desea buscar: ");
+  scanf(" %[^\n]s", artista);
+
+  MapPair *pair = map_search(music_byartist, artista);
+
+  while(pair == NULL){
+    printf("\nEl artista ingresado no se encontró.\n\n");
+    printf("Ingrese el artista que desea buscar: ");
+    scanf(" %[^\n]s", artista);
+    pair = map_search(music_byartist, artista);
+  }
+  
+  List* canciones = pair->value;
+  Song *cancion = list_first(canciones);
+      
+  while (cancion != NULL) {
+    printf("ID: %s, Artista(s): ", cancion->id);
+
+    char *current = list_first(cancion->artists);
+    printf("%s", current);
+    
+    while(current != NULL){
+      current = list_next(cancion->artists);
+      if(current != NULL) printf(", %s", current);
+    }
+
+    printf(" - Album: %s - Track: %s - Tempo: %f - Track Genre: %s\n", cancion->album_name, 
+      cancion->track_name, cancion->tempo, cancion->track_genre);
     cancion = list_next(canciones);
   }
 }
@@ -215,6 +269,7 @@ int main() {
   char opcion;
   Map *music_byid = map_create(is_equal_str);
   Map *music_bygenres = map_create(is_equal_str);
+  Map *music_byartist = map_create(is_equal_str);
 
   bool cargadas = false;
   do {
@@ -224,17 +279,17 @@ int main() {
 
     switch (opcion) {
     case '1':
-      if(cargadas) printf("Ya se cargaron aweonao\n");
+      if(cargadas) printf("¡Las canciones ya se cargaron!\n\n");
       else {
         cargadas = true;
-        cargar_musica(music_byid, music_bygenres);
+        cargar_musica(music_byid, music_bygenres, music_byartist);
       }  
       break;
     case '2':
       buscar_por_genero(music_bygenres);
       break;
     case '3':
-      //buscar_por_artista(music_byid);
+      buscar_por_artista(music_bygenres);
       break;
     case '4':
       //buscar_por_tempo(music_byid);
@@ -244,6 +299,9 @@ int main() {
     case '6':
       break;
     case '7':
+      break;
+    case '8':
+      puts("Saliendo del programa...");
       break;
     default:
       puts("Opción no válida. Por favor, intente de nuevo.");
