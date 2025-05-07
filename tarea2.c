@@ -294,7 +294,7 @@ void crear_lista_repro(Map *listas_repro){
 
 }
 
-void agregar_cancion(Map *listas_repro) {
+void agregar_cancion(Map *listas_repro, Map *music_byid) {
   //printf("A qué lista quiere agregar la canción:\n");
 
   MapPair *pair = map_first(listas_repro);
@@ -311,6 +311,28 @@ void agregar_cancion(Map *listas_repro) {
       pair = map_next(listas_repro);
       contador++;
   }
+/*NO LO MUESTRA, QUEDA PEGADO EN EL WHILE DE ARRIBA
+  printf("Ingrese el nombre de la lista que desea agregar una cancion:");
+  char nombre[100];
+  scanf(" %[^\n]s", nombre);
+
+  MapPair *lista_pair = map_search(listas_repro, nombre);
+  while(lista_pair == NULL){
+    printf("El nombre ingresado de la lista no existe\n");
+    printf("porfavor ingresa uno valido:");
+    
+    scanf(" %[^\n]s", nombre);
+    MapPair *lista_pair = map_search(music_byid, nombre);
+  }
+
+  printf("Ingrese el ID de la cancion que desea ingresar:");
+  char ID[100];
+  scanf("%s", ID);
+  while(ID < 0 || ID > 114000){
+    printf("El ID ingresado no es valido\n");
+    printf("Ingrese un ID valido:");
+    scanf("%s", ID);
+  }*/
 }
 
 int main() {
@@ -349,7 +371,7 @@ int main() {
       crear_lista_repro(listas_repro);
       break;
     case '6':
-      agregar_cancion(listas_repro);
+      agregar_cancion(listas_repro, music_byid);
       break;
     case '7':
       break;
