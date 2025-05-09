@@ -123,6 +123,5 @@ NO SE PO AVERIGUA
 
 ### 🐞 Posibles problemas encontrados
 
-- **Rendimiento lento**: la carga de canciones puede ser algo lenta, provocando impaciencia al usuario.
 - **Soporte**: Solo Windows, usuarios de MacOS podrían tener dificultades ejecutando el programa.
 - **Entrada inválida**: si se ingresan caracteres cuando se solicita un número, el programa puede trabarse.

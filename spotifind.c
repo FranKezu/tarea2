@@ -50,29 +50,16 @@ void barra_carga(long actual, long total) {
   fflush(stdout);
 }
 
-
-/**
- * Compara dos claves de tipo string para determinar si son iguales.
- * Esta función se utiliza para inicializar mapas con claves de tipo string.
- *
- * @param key1 Primer puntero a la clave string.
- * @param key2 Segundo puntero a la clave string.
- * @return Retorna 1 si las claves son iguales, 0 de lo contrario.
- */
 int is_equal_str(void *key1, void *key2) {
   return strcmp((char *)key1, (char *)key2) == 0;
 }
 
-/**
- * Compara dos claves de tipo entero para determinar si son iguales.
- * Esta función se utiliza para inicializar mapas con claves de tipo entero.
- *
- * @param key1 Primer puntero a la clave entera.
- * @param key2 Segundo puntero a la clave entera.
- * @return Retorna 1 si las claves son iguales, 0 de lo contrario.
- */
-int is_equal_int(void *key1, void *key2) {
-  return *(int *)key1 == *(int *)key2;
+bool comprobacion(HashMap *map){
+  if(firstMap(map) == NULL){
+    printf("¡El programa no puede funcionar si no se han cargado canciones!\n\n");
+    return false;
+  }
+  return true;
 }
 
 char *velocidad(float tempo){
@@ -173,6 +160,12 @@ void cargar_musica(HashMap  *music_byid, HashMap  *music_bygenres, HashMap  *mus
 
 void mostrar_canciones(Pair *pair) {
   List *canciones = (List *)pair->value;
+
+  if((Song *)list_first(canciones) == NULL){
+    printf("La lista de reproducción no contiene canciones.\n");
+    return;
+  }
+
   printf("\nLista de canciones:\n");
   Song *cancion = (Song *)list_first(canciones);
   while (cancion != NULL) {
@@ -195,10 +188,8 @@ void mostrar_canciones(Pair *pair) {
 }
 
 void buscar_por_genero(HashMap *music_bygenres) {
-  if(firstMap(music_bygenres) == NULL){
-      printf("¡El programa no puede funcionar si no se han cargado canciones!\n\n");
-      return;
-  }    
+  if(!comprobacion(music_bygenres)) return;
+
   char *lista_generos[114] = {
     "acoustic", "afrobeat", "alt-rock", "alternative", "ambient",
     "anime", "black-metal", "bluegrass", "blues", "brazil",
@@ -269,6 +260,8 @@ void buscar_por_genero(HashMap *music_bygenres) {
 }
 
 void buscar_por_artista(HashMap *music_byartist) {
+  if(!comprobacion(music_byartist)) return;
+
   char artista[100];
   
   printf("\n─────────────────────────────────────────────────────────────────────────\n");
@@ -290,6 +283,8 @@ void buscar_por_artista(HashMap *music_byartist) {
 }
 
 void buscar_por_tempo(HashMap *music_bytempo) {
+  if(!comprobacion(music_bytempo)) return;
+
   char opcion;
   puts("╔════════════════════════════════════════════╗");
   puts("║            Spotifind - Elegir tempo        ║");
@@ -321,7 +316,7 @@ void buscar_por_tempo(HashMap *music_bytempo) {
     pair = searchMap(music_bytempo, tempo);
   }
 
-  //free(tempo);
+  free(tempo);
   mostrar_canciones(pair);
 }
 
@@ -342,32 +337,40 @@ void crear_lista_repro(HashMap *listas_repro){
 
 }
 
-void mostrar_listas_creadas(HashMap *mapa){
-  Pair *pair = firstMap(mapa);
+bool mostrar_listas_creadas(HashMap *repro){
+
+  Pair *pair = firstMap(repro);
   if (pair == NULL) {
-      printf("No hay listas de reproducción disponibles.\n");
-      return;
+    printf("No se encontraron listas de reproducción para mostrar.\n");
+    printf("Por favor, crea una lista primero.\n\n");
+    return false;
   }
-  puts("Listas de reproducción creadas:");
-  puts("  N° | Nombre                    | Canciones ");
-  puts("-----+---------------------------+-----------");
+  puts("╔═══════════════════════════════════════════════════╗");
+  puts("║           Listas de reproducción creadas          ║");
+  puts("╠═════╦═════════════════════════════╦═══════════════╣");
+  puts("║  N° ║ Nombre                      ║ Canciones     ║");
+  puts("╠═════╬═════════════════════════════╬═══════════════╣");
+
   int contador = 1;
 
   while (pair != NULL) {
     char *nombre = (char *)pair->key;
     List *lista = (List *)pair->value;
-    printf(" %2d  | %-25s |     %3d\n", contador, nombre, list_size(lista));
+    printf("║ %2d  ║ %-28s║     %4d      ║\n", contador, nombre, list_size(lista));
     contador++;
-    pair = nextMap(mapa);
+    pair = nextMap(repro);
   }
 
+  puts("╚═════╩═════════════════════════════╩═══════════════╝");
+  return true;
 }
 
 
 void agregar_cancion(HashMap *listas_repro, HashMap *music_byid) {
-
-  mostrar_listas_creadas(listas_repro);
-
+  if(!comprobacion(music_byid)) return;
+  bool flag = mostrar_listas_creadas(listas_repro);
+  if(!flag) return;
+  
   char nombre_lista[100];
   printf("Ingrese el nombre de la lista que desea agregar una cancion:");
   scanf(" %[^\n]s", nombre_lista);
@@ -375,21 +378,21 @@ void agregar_cancion(HashMap *listas_repro, HashMap *music_byid) {
   Pair *lista_pair = searchMap(listas_repro, nombre_lista);
   while(lista_pair == NULL){
     printf("El nombre ingresado de la lista no existe\n");
-    printf("porfavor ingresa uno valido:");
+    printf("Por favor ingresa uno valido:");
     
     scanf(" %[^\n]s", nombre_lista);
-    lista_pair = searchMap(music_byid, nombre_lista);
+    lista_pair = searchMap(listas_repro, nombre_lista);
   }
 
   char ID[100];
   printf("Ingrese el ID de la cancion que desea ingresar:");
-  scanf(" %s", ID);
+  scanf(" %[^\n]s", ID);
 
   Pair *song_pair = searchMap(music_byid, ID);
   while(song_pair == NULL){
     printf("El ID ingresado no ha encontrado\n");
     printf("Ingrese un ID válido:");
-    scanf(" %s", ID);
+    scanf(" %[^\n]s", ID);
     song_pair = searchMap(music_byid, ID);
   }
 
@@ -397,12 +400,14 @@ void agregar_cancion(HashMap *listas_repro, HashMap *music_byid) {
   List *lista = (List *)lista_pair->value;
   list_pushBack(lista, cancion);
 
-  printf("\nCanción \"%s\" agregada exitosamente a la lista \"%s\".\n", cancion->track_name, nombre_lista);
+  printf("\nCanción \"%s\" del artista agregada exitosamente a la lista \"%s\".\n", cancion->track_name, nombre_lista);
 }
 
 void mostrar_lista_repro(HashMap *listas_repro){
 
-  mostrar_listas_creadas(listas_repro);
+  bool flag = mostrar_listas_creadas(listas_repro);
+  if(!flag) return;
+
   char nombre_lista[100];
   printf("\nIngrese el nombre de la lista que desea ver: ");
   scanf(" %[^\n]s", nombre_lista);
