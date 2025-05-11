@@ -47,7 +47,7 @@ $OutputEncoding = [Console]::OutputEncoding = [Text.UTF8Encoding]::new()
 
 ### 📋 ¿Qué hace el programa?
 
-NO SE PO AVERIGUA
+Este programa, llamado Spotifind, es un sistema de gestión de canciones que permite cargar datos desde un archivo CSV y organizarlos eficientemente utilizando estructuras como HashMap y List. Ofrece funciones para buscar canciones por género, artista o velocidad (tempo), así como crear listas de reproducción personalizadas y agregarles canciones. Es ideal para manejar colecciones musicales de forma dinámica y estructurada, facilitando la búsqueda y clasificación de canciones según distintos criterios.
 
 ---
 
@@ -69,59 +69,126 @@ NO SE PO AVERIGUA
 
 ### 📋 Explicación del menú del programa:
 
-#### 1️⃣ FUNCION  
-- Falta texto ariel :v
+## 1️⃣ FUNCION  (📂 Cargar canciones desde archivo CSV)
 
-#### 2️⃣ FUNCION
-- Falta texto ariel :v
+- Lee los datos del archivo song_dataset.csv.
 
-#### 3️⃣ FUNCION  
-- Falta texto ariel :v
+- Llena las estructuras (HashMaps, listas) con la información de las canciones.
 
-#### 4️⃣ FUNCION  
-- Falta texto ariel :v
+- Muestra una barra de carga animada mientras se procesan los datos.
 
-#### 5️⃣ FUNCION  
-- Falta texto ariel :v
+## 2️⃣ FUNCION (🔍 Buscar canciones por género)
 
-#### 6️⃣ FUNCION
-- Falta texto ariel :v
+- Pide al usuario que ingrese un género (por ejemplo: Pop, Rock, Jazz).
 
+- Muestra todas las canciones de ese género.
 
+## 3️⃣ FUNCION  (🎤 Buscar canciones por artista)
+
+- Solicita el nombre de un artista.
+
+- Muestra todas las canciones que tiene ese artista en la base de datos.
+
+## 4️⃣ FUNCION  (⏱️ Buscar canciones por velocidad (tempo))
+
+Permite buscar canciones por tempo:
+
+   + Lentas (tempo < 90)
+
+   + Moderadas (90 ≤ tempo ≤ 120)
+
+   + Rápidas (tempo > 120)
+
+## 5️⃣ FUNCION  (🎵 Crear lista de reproducción)
+
+- El usuario asigna un nombre a una nueva lista.
+
+- La lista queda disponible para agregar canciones.
+
+## 6️⃣ FUNCION (➕ Agregar canción a una lista)
+
+- Pide el nombre de una canción y el nombre de la lista.
+
+- Si existen ambos, la canción se añade a la lista correspondiente.
+
+## 7️⃣ FUNCION (📄 Mostrar canciones de una lista)
+
+- Pide el nombre de una lista de reproducción.
+
+- Muestra todas las canciones que contiene esa lista.
+
+## 8️⃣ FUNCION (🚪 Salir del programa)
+
+- Termina la ejecución del programa de forma segura.
+  
 **Antes de salir del programa, puedes ejecutar todas las opciones del menú tantas veces lo necesites.**
-
----
 
 ### 🚀 Ejemplo simple de uso
 
-1. **Iniciar el programa**:
-   - WAAAAAAAAAAAAAAAA EJEMPLO
+**Iniciar el programa**:
+   ```bash
+   🎵 Bienvenido al gestor de canciones 🎵
 
-2. **Registrar un ticket**:
+   1) Cargar canciones 
+   2) Buscar por género
+   3) Buscar por artista 
+   4) Buscar por tempo  
+   5) Crear lista de reproducción  
+   6) Agregar canción a la lista   
+   7) Mostrar canciones de la lista  
+   8) Salir
+```
+1. **Cargar Canciones**:
    - Selecciona la opción `1`.
-   - Ingresa un ID, por ejemplo: `19`.
-   - Describe el problema: `PC no enciende.`.
-   - El ticket se registra con prioridad baja por defecto.
+   ```
+   "Las canciones se han cargado correctamente."
+   ```
 
-3. **Cambiar prioridad**:
+2. **Buscar por género**:
    - Selecciona la opción `2`.
-   - Ingresa el ID: `19`.
-   - Elige nueva prioridad: `1` (Alta).
-   - El ticket se reordena en la lista según su nueva prioridad.
-
-4. **Mostrar lista de tickets**:
+   ```
+    Ingrese el género de la canción: Anime
+    "Se muestran todas las canciones con ese género"
+    ```
+3. **Buscar por artista**:
    - Selecciona la opción `3`.
-   - Verás una lista de todos los tickets ingresados, incluyendo el que acabas de ingresar ID `19`. Estarán ordenados por hora y prioridad.
-5. **Procesar ticket**:
+   ```
+   Ingrese el artista que desea buscar: Michael Jackson
+   "Se muestran todas las canciones en las que participa el artista"
+   ```
+4. **Buscar por tempo**:
    - Selecciona la opción `4`.
-   - El ticket ID `19` se muestra junto a sus datos como el siguiente a procesar y se elimina de la lista.
-
-6. **Salir**:
-   - Selecciona la opción `6` para finalizar el programa.
-
+   ```
+   1) Canciones lentas
+   2) Canciones moderadas
+   3) Canciones rápidas
+   Ingrese la opción del tempo que desea buscar: 2
+   "Se muestran todas las canciones que tengan el tempo 'Moderado'. "
+   ```
+5. **Crear lista de reproducción**:
+   - Selecciona la opción `5`.
+   ```
+    Ingrese el nombre para su lista de reproducción: Favoritas
+    "Lista de reproducción (Favoritas) creada con éxito."
+   ```
+6. **Agregar canción a la lista**:
+    - Selecciona la opción `6`.
+   ```
+   Ingrese el nombre de la lista que desea agregar una cancion: Favoritas.
+   Ingrese el ID de la cancion que desea ingresar: 3125
+   "Canción "..." agregada exitosamente a la lista Favoritas."
+   ``` 
+7. **Mostrar canciones de la lista **:
+    - Selecciona la opción `7`.
+   ```
+   Ingrese el nombre de la lista que desea ver: Favoritas
+   "Lista de canciones:"
+   ...
+   ``` 
 ---
 
 ### 🐞 Posibles problemas encontrados
 
 - **Soporte**: Solo Windows, usuarios de MacOS podrían tener dificultades ejecutando el programa.
 - **Entrada inválida**: si se ingresan caracteres cuando se solicita un número, el programa puede trabarse.
+- **Buscar por Tempo**: Puede ser algo lento para el usuario, esto sucede por la cantidad de prints que debe realizar el programa (debe recorrer 114000 canciones e imprimir las que esten en el rango del tempo que desea el usuario). 
