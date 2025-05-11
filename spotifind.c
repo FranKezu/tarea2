@@ -399,7 +399,7 @@ void agregar_cancion(HashMap *listas_repro, HashMap *music_byid) {
   List *lista = (List *)lista_pair->value;
   list_pushBack(lista, cancion);
 
-  printf("\nCanción \"%s\" del artista agregada exitosamente a la lista \"%s\".\n", cancion->track_name, nombre_lista);
+  printf("\nCanción \"%s\" exitosamente a la lista \"%s\".\n", cancion->track_name, nombre_lista);
 }
 
 void mostrar_lista_repro(HashMap *listas_repro){
