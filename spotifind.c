@@ -292,7 +292,7 @@ void buscar_por_tempo(HashMap *music_bytempo) {
   puts("║  2) Canciones moderadas                    ║");
   puts("║  3) Canciones rápidas                      ║");
   puts("╚════════════════════════════════════════════╝");
-  printf("Ingrese el tempo que desea buscar: ");
+  printf("Ingrese la opción del tempo que desea buscar: ");
   scanf(" %c", &opcion);
 
   while(opcion != '1' && opcion != '2' && opcion != '3'){
