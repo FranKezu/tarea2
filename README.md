@@ -27,13 +27,13 @@ También puedes hacerlo desde Visual Studio Code ejecutando:
 2. Compila el programa con el siguiente comando:
 
 ```bash
-gcc tarea2.c tdas/list.c tdas/map.c tdas/extra.c -o tarea2
+gcc gcc spotifind.c tdas\list.c tdas\extra.c tdas\hashmap.c -o spotifind
 ```
 
 3. Luego ejecútalo con:
 
 ```bash
-./tarea2
+./spotifind
 ```
 
 En caso de ver carácteres raros, es porque no se están mostrando los tildes correctamente, para solucionar esto basta con escribir lo siguiente la primera vez antes de ejecturar el programa.
@@ -53,9 +53,11 @@ Este programa, llamado Spotifind, es un sistema de gestión de canciones que per
 
 ### 📂 Archivos requeridos (Incluídos en el repositorio)
 
-- `tarea2.c`: contiene el código del programa.
+- `spotifind.c`: contiene el código del programa.
+- `song_dataset.csv`: base de datos que contiene todas las canciones.
 - `tdas/list.c` y `tdas/list.h`:
 - `tdas/extra.c` y `tdas/extra.h`
+- `tdas/hashmap.c` y `tdas/hashmap.h`
 
 ---
 
@@ -69,7 +71,7 @@ Este programa, llamado Spotifind, es un sistema de gestión de canciones que per
 
 ### 📋 Explicación del menú del programa:
 
-## 1️⃣ FUNCION  (📂 Cargar canciones desde archivo CSV)
+## 1️⃣ 📂 Cargar canciones desde archivo CSV
 
 - Lee los datos del archivo song_dataset.csv.
 
@@ -77,19 +79,19 @@ Este programa, llamado Spotifind, es un sistema de gestión de canciones que per
 
 - Muestra una barra de carga animada mientras se procesan los datos.
 
-## 2️⃣ FUNCION (🔍 Buscar canciones por género)
+## 2️⃣ 🔍 Buscar canciones por género
 
 - Pide al usuario que ingrese un género (por ejemplo: Pop, Rock, Jazz).
 
 - Muestra todas las canciones de ese género.
 
-## 3️⃣ FUNCION  (🎤 Buscar canciones por artista)
+## 3️⃣ 🎤 Buscar canciones por artista
 
 - Solicita el nombre de un artista.
 
 - Muestra todas las canciones que tiene ese artista en la base de datos.
 
-## 4️⃣ FUNCION  (⏱️ Buscar canciones por velocidad (tempo))
+## 4️⃣ ⏱️ Buscar canciones por velocidad (tempo)
 
 Permite buscar canciones por tempo:
 
@@ -99,25 +101,25 @@ Permite buscar canciones por tempo:
 
    + Rápidas (tempo > 120)
 
-## 5️⃣ FUNCION  (🎵 Crear lista de reproducción)
+## 5️⃣ 🎵 Crear lista de reproducción
 
 - El usuario asigna un nombre a una nueva lista.
 
 - La lista queda disponible para agregar canciones.
 
-## 6️⃣ FUNCION (➕ Agregar canción a una lista)
+## 6️⃣ ➕ Agregar canción a una lista
 
 - Pide el nombre de una canción y el nombre de la lista.
 
 - Si existen ambos, la canción se añade a la lista correspondiente.
 
-## 7️⃣ FUNCION (📄 Mostrar canciones de una lista)
+## 7️⃣ 📄 Mostrar canciones de una lista
 
 - Pide el nombre de una lista de reproducción.
 
 - Muestra todas las canciones que contiene esa lista.
 
-## 8️⃣ FUNCION (🚪 Salir del programa)
+## 8️⃣ 🚪 Salir del programa
 
 - Termina la ejecución del programa de forma segura.
   
@@ -187,8 +189,15 @@ Permite buscar canciones por tempo:
    ``` 
 ---
 
+### 🔨 Comentario como grupo
+
+Como dupla nos fue muy fácil trabajar, programamos siempre juntos, ya sea presencialmente o por discord, por lo que el trabajo fue equitativamente bien distribuido. No tuvimos ningún tipo de inconveniente al realizar la tarea.
+
+
+
 ### 🐞 Posibles problemas encontrados
 
-- **Soporte**: Solo Windows, usuarios de MacOS podrían tener dificultades ejecutando el programa.
+- **Soporte**: solo Windows, usuarios de MacOS podrían tener dificultades ejecutando el programa.
 - **Entrada inválida**: si se ingresan caracteres cuando se solicita un número, el programa puede trabarse.
-- **Buscar por Tempo**: Puede ser algo lento para el usuario, esto sucede por la cantidad de prints que debe realizar el programa (debe recorrer 114000 canciones e imprimir las que esten en el rango del tempo que desea el usuario). 
+- **Buscar por Tempo**: puede ser algo lento para el usuario si este desea mostrar todas las canciones.
+- **Carácteres extraños**: canciones con carácteres asiáticos (chinos, japoneses, etc...) se muestran como "????", ya que el programa no es capaz de leerlos.
