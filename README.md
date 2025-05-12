@@ -71,7 +71,7 @@ Este programa, llamado Spotifind, es un sistema de gestión de canciones que per
 
 ### 📋 Explicación del menú del programa:
 
-## 1️⃣ 📂 Cargar canciones desde archivo CSV
+### 1️⃣ 📂 Cargar canciones desde archivo CSV
 
 - Lee los datos del archivo song_dataset.csv.
 
@@ -79,19 +79,19 @@ Este programa, llamado Spotifind, es un sistema de gestión de canciones que per
 
 - Muestra una barra de carga animada mientras se procesan los datos.
 
-## 2️⃣ 🔍 Buscar canciones por género
+### 2️⃣ 🔍 Buscar canciones por género
 
 - Pide al usuario que ingrese un género (por ejemplo: Pop, Rock, Jazz).
 
 - Muestra todas las canciones de ese género.
 
-## 3️⃣ 🎤 Buscar canciones por artista
+### 3️⃣ 🎤 Buscar canciones por artista
 
 - Solicita el nombre de un artista.
 
 - Muestra todas las canciones que tiene ese artista en la base de datos.
 
-## 4️⃣ ⏱️ Buscar canciones por velocidad (tempo)
+### 4️⃣ ⏱️ Buscar canciones por velocidad (tempo)
 
 Permite buscar canciones por tempo:
 
@@ -101,29 +101,31 @@ Permite buscar canciones por tempo:
 
    + Rápidas (tempo > 120)
 
-## 5️⃣ 🎵 Crear lista de reproducción
+### 5️⃣ 🎵 Crear lista de reproducción
 
 - El usuario asigna un nombre a una nueva lista.
 
 - La lista queda disponible para agregar canciones.
 
-## 6️⃣ ➕ Agregar canción a una lista
+### 6️⃣ ➕ Agregar canción a una lista
 
 - Pide el nombre de una canción y el nombre de la lista.
 
 - Si existen ambos, la canción se añade a la lista correspondiente.
 
-## 7️⃣ 📄 Mostrar canciones de una lista
+### 7️⃣ 📄 Mostrar canciones de una lista
 
 - Pide el nombre de una lista de reproducción.
 
 - Muestra todas las canciones que contiene esa lista.
 
-## 8️⃣ 🚪 Salir del programa
+### 8️⃣ 🚪 Salir del programa
 
 - Termina la ejecución del programa de forma segura.
   
 **Antes de salir del programa, puedes ejecutar todas las opciones del menú tantas veces lo necesites.**
+
+---
 
 ### 🚀 Ejemplo simple de uso
 
@@ -191,9 +193,9 @@ Permite buscar canciones por tempo:
 
 ### 🔨 Comentario como grupo
 
-Como dupla nos fue muy fácil trabajar, programamos siempre juntos, ya sea presencialmente o por discord, por lo que el trabajo fue equitativamente bien distribuido. No tuvimos ningún tipo de inconveniente al realizar la tarea.
+- Como dupla nos fue muy fácil trabajar, programamos siempre juntos, ya sea presencialmente o por discord, por lo que el trabajo fue equitativamente bien distribuido. No tuvimos ningún tipo de inconveniente al realizar la tarea.
 
-
+---
 
 ### 🐞 Posibles problemas encontrados
 
